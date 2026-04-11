@@ -1,0 +1,68 @@
+const AuthService = require('../services/authService');
+const User = require('../models/User');
+
+exports.register = async (req, res) => {
+  try {
+    console.log("REGISTER BODY:", req.body);
+
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const user = await AuthService.registerUser(username, email, password);
+    const token = AuthService.generateToken(user);
+
+    res.status(201).json({
+      message: 'User registered and logged in successfully',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const token = await AuthService.loginUser(email, password);
+    res.json({ token });
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+    res.status(401).json({ error: error.message });
+  }
+};
+
+exports.oauthCallback = async (req, res) => {
+  try {
+    const token = await AuthService.handleOAuthLogin(req.user);
+    res.redirect(`${process.env.FRONTEND_URL}/oauth-callback?token=${token}`);
+  } catch (error) {
+    res.redirect(`${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(error.message)}`);
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) throw new Error('User not found');
+
+    res.json({
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    console.error("GET USER ERROR:", error);
+    res.status(404).json({ error: error.message });
+  }
+};
