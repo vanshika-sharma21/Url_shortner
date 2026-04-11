@@ -1,11 +1,9 @@
 const passport = require('passport');
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
-const LocalStrategy = require('passport-local').Strategy;
+const { Strategy: LocalStrategy } = require('passport-local');
 const bcrypt = require('bcryptjs');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const { Strategy: GitHubStrategy } = require('passport-github2');
-const AuthService = require('../services/authService');
-
 const User = require('../models/User');
 require('dotenv').config();
 
@@ -46,7 +44,7 @@ passport.use(new JwtStrategy(
   }
 ));
 
-// Google OAuth (disabled - add credentials to enable)
+// Google OAuth (conditional - safe)
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   passport.use(new GoogleStrategy(
     {
@@ -65,7 +63,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   ));
 }
 
-// GitHub OAuth (disabled - add credentials to enable)
+// GitHub OAuth (conditional - safe)
 if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   passport.use(new GitHubStrategy(
     {
@@ -86,3 +84,4 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
 }
 
 module.exports = passport;
+

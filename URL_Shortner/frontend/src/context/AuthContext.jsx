@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {//A component that wraps your app
     }
   };
 
-  const register = async (userData) => {
+    const register = async (userData) => {
     try {
       const { data } = await api.post('/api/auth/register', userData);
       const token = data.token;

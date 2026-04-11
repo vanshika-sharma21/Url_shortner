@@ -14,7 +14,7 @@ class UrlService {
 
   static async getOriginalUrl(shortCode, ip, referrer, userAgent) {
     const [rows] = await pool.query(
-      'SELECT * FROM short_links WHERE short_code = ?',
+      'SELECT * FROM urls WHERE short_code = ?',
       [shortCode]
     );
 
@@ -24,13 +24,15 @@ class UrlService {
 
     const url = rows[0];
 
+    // Log the visit (optional)
     await pool.query(
       'INSERT INTO visits (url_id, ip_address, referrer, user_agent) VALUES (?, ?, ?, ?)',
       [url.id, ip, referrer, userAgent]
     );
 
+    // Increment click count
     await pool.query(
-      'UPDATE short_links SET clicks = clicks + 1 WHERE id = ?',
+      'UPDATE urls SET clicks = clicks + 1 WHERE id = ?',
       [url.id]
     );
 
@@ -49,3 +51,4 @@ class UrlService {
 }
 
 module.exports = UrlService;
+

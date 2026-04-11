@@ -19,7 +19,7 @@ exports.shortenUrl = async (req, res) => {
       shortCode
     });
   } catch (error) {
-    console.error("Error in shortenUrl:", error.message);
+
     res.status(400).json({ error: error.message });
   }
 };
@@ -66,10 +66,10 @@ exports.deleteUrl = async (req, res) => {
 exports.getUserStats = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log("📊 Fetching stats for user ID:", userId);
+
 
     const urls = await UrlService.getUserUrls(userId);
-    console.log("✅ URLs fetched from model:", urls);
+
 
     const totalUrls = urls.length;
 
@@ -82,12 +82,12 @@ exports.getUserStats = async (req, res) => {
       totalClicks += clicks;
     }
 
-    console.log("✅ Stats calculated:", { totalUrls, totalClicks });
+
 
     res.json({ totalUrls, totalClicks });
 
   } catch (error) {
-    console.error("🔥 Error in getUserStats:", error.stack || error.message);
+
     res.status(500).json({ error: 'Internal server error' });
   }
 };
