@@ -3,16 +3,15 @@ const router = express.Router();
 const passport = require('passport');
 const urlController = require('../controllers/urlController');
 
-// Public route (NO JWT)
-console.log("Controller Methods:", urlController);
+// Public route (no JWT required)
+router.post('/shorten', urlController.shortenUrl);
+router.get('/:shortCode', urlController.redirectUrl);
 
-
-// 🔐 Authenticated routes (JWT protected)
+// Protected routes
 router.use(passport.authenticate('jwt', { session: false }));
 
-router.post('/shorten', urlController.shortenUrl);
 router.get('/user/urls', urlController.getUserUrls);
-router.get('/stats/user', urlController.getUserStats); // ✅ ADD THIS LINE
+router.get('/stats/user', urlController.getUserStats);
 router.delete('/:id', urlController.deleteUrl);
 
 module.exports = router;
