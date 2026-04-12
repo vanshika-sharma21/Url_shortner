@@ -17,7 +17,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
 app.use(helmet());
@@ -25,10 +25,16 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(passport.initialize());
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('Backend is running successfully');
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/url', urlRoutes);
 app.use('/api/stats', statsRoutes);
+
 app.get('/:shortCode', async (req, res) => {
   try {
     const originalUrl = await UrlService.getOriginalUrl(
